@@ -3,11 +3,19 @@ use std::fs::File;
 use serde_json::Value;
 
 fn main() {
-    let file = File::open("C:\\Users\\Mojtaba\\Desktop\\duplicate-urldomains-min.json").unwrap();
+
+    let mut pargs = pico_args::Arguments::from_env();
+    let input: String = pargs.value_from_str("-i").unwrap();
+    let output: String = pargs.value_from_str("-o").unwrap();
+
+    // "C:\\Users\\Mojtaba\\Desktop\\duplicate-urldomains-min.json"
+    // "C:\\Users\\Mojtaba\\Desktop\\duplicate-urldomains-min.csv"
+
+    let file = File::open(&input).unwrap();
     let json: Value = serde_json::from_reader(file).unwrap();
     let mut csv_writer = csv::WriterBuilder::new()
         .delimiter(b';')
-        .from_path("C:\\Users\\Mojtaba\\Desktop\\duplicate-urldomains-min.csv")
+        .from_path(output)
         .unwrap();
     let buckets = json["aggregations"]["adbuk"]["buckets"].as_array().unwrap();
     let mut csv_id = 0;
